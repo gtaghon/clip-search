@@ -13,8 +13,28 @@ from transformers import DistilBertTokenizer
 import config as CFG
 from dataset import CLIPDataset, get_transforms
 from CLIP import CLIPModel
-from utils import AvgMeter, get_lr
 
+
+class AvgMeter:
+    def __init__(self, name="Metric"):
+        self.name = name
+        self.reset()
+
+    def reset(self):
+        self.avg, self.sum, self.count = [0] * 3
+
+    def update(self, val, count=1):
+        self.count += count
+        self.sum += val * count
+        self.avg = self.sum / self.count
+
+    def __repr__(self):
+        text = f"{self.name}: {self.avg:.4f}"
+        return text
+
+def get_lr(optimizer):
+    for param_group in optimizer.param_groups:
+        return param_group["lr"]
 
 def make_train_valid_dfs():
     dataframe = pd.read_csv(f"{CFG.captions_path}/captions.csv")
@@ -87,8 +107,20 @@ def main():
     train_loader = build_loaders(train_df, tokenizer, mode="train")
     valid_loader = build_loaders(valid_df, tokenizer, mode="valid")
 
+    model = CLIP(
+        embed_dim=512,
+        image_resolution=2048,
+        vision_layers=12, 
+        vision_width=2048,
+        vision_patch_size=32,
+        context_length=16,
+        vocab_size=49408,
+        transformer_width=512,
+        transformer_heads=8,
+        transformer_layers=12
+    )  # based on ViT-b32 config
 
-    model = CLIPModel().to(CFG.device)
+    model.to(CFG.device)
     optimizer = torch.optim.AdamW(
         model.parameters(), lr=CFG.lr, weight_decay=CFG.weight_decay
     )
