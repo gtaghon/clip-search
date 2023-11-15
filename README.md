@@ -2,8 +2,6 @@
 
 Discover and explore similar images using the power of OpenAI CLIP with CLIP-Search. This demo project leverages the capabilities of OpenAI CLIP to provide a seamless and intuitive image search experience.
 
-![Animated screenshot](clip-search.gif)
-
 ## Install
 
 Getting started with CLIP-Search is easy. Simply follow these steps to install:
