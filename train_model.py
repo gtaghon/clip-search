@@ -11,8 +11,9 @@ from torch import nn
 from transformers import DistilBertTokenizer
 
 import config as CFG
-from dataset import CLIPDataset, get_transforms
-from CLIP import CLIPModel
+from oac.dataset import CLIPDataset, get_transforms
+import CLIP.clip.model as clip
+#from CLIP import CLIPModel
 
 
 class AvgMeter:
@@ -107,7 +108,7 @@ def main():
     train_loader = build_loaders(train_df, tokenizer, mode="train")
     valid_loader = build_loaders(valid_df, tokenizer, mode="valid")
 
-    model = CLIP(
+    model = clip.CLIP(
         embed_dim=512,
         image_resolution=2048,
         vision_layers=12, 
